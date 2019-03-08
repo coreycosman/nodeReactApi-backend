@@ -30,7 +30,7 @@ module.exports = {
       res.status(200).json(token);
     } catch (e) {
       console.log(e);
-      serverError(res, generateUniqueId());
+      serverError(res);
     }
   },
 
@@ -56,7 +56,7 @@ module.exports = {
       return res.status(200).json(token);
     } catch (e) {
       console.log(e);
-      serverError(res, generateUniqueId());
+      serverError(res);
     }
   }
 };

@@ -4,7 +4,8 @@ const router = express.Router();
 
 const { validate } = require("../models/Post");
 const {
-  fetchPosts,
+  fetchAllPosts,
+  fetchUserPosts,
   createPost,
   updatePost,
   deletePost
@@ -16,6 +17,7 @@ const requireAuth = passport.authenticate("jwt", { session: false });
 router
   .route("/")
   .post(requireAuth, validate("create"), createPost)
-  .get(requireAuth, fetchPosts);
+  .get(requireAuth, fetchAllPosts);
+router.route("/user").get(requireAuth, fetchUserPosts);
 
 module.exports = router;

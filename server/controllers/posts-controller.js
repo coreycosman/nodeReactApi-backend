@@ -6,13 +6,23 @@ const { generateUniqueId } = require("../modules/helpers/unique-id");
 const serverError = require("../modules/helpers/server-error");
 
 module.exports = {
-  fetchPosts: async (req, res, next) => {
+  fetchAllPosts: async (req, res, next) => {
     try {
       const posts = await Post.find({});
       res.status(200).json({ posts });
     } catch (e) {
       console.log(e);
-      serverError(res, generateUniqueId());
+      serverError(res);
+    }
+  },
+  fetchUserPosts: async (req, res, next) => {
+    try {
+      const userPosts = await Post.find({ userId: req.user._id });
+      userName = req.user.email;
+      res.status(200).json({ userPosts, userName });
+    } catch (e) {
+      console.log(e);
+      serverError(res);
     }
   },
   createPost: async (req, res, next) => {
@@ -26,7 +36,7 @@ module.exports = {
       res.status(200).json({ created: true });
     } catch (e) {
       console.log(e);
-      serverError(res, generateUniqueId());
+      serverError(res);
     }
   },
   updatePost: async (req, res, next) => {
