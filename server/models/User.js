@@ -55,6 +55,7 @@ const mongoose = require("mongoose"),
     }),
   confirmation = Joi.string()
     .min(8)
+    .required()
     .error(errors => {
       const confirmationErrorsArray = errors.map(err => {
         switch (err.type) {
@@ -68,6 +69,32 @@ const mongoose = require("mongoose"),
       });
       return confirmationErrorsArray;
     }),
+  firstName = Joi.string()
+    .required()
+    .error(errors => {
+      const firstNameErrorsArray = errors.map(err => {
+        switch (err.type) {
+          case "any.empty":
+            return { message: "first name must be present" };
+          default:
+            return;
+        }
+      });
+      return firstNameErrorsArray;
+    }),
+  lastName = Joi.string()
+    .required()
+    .error(errors => {
+      const lastNameErrorsArray = errors.map(err => {
+        switch (err.type) {
+          case "any.empty":
+            return { message: "last name must be present" };
+          default:
+            return;
+        }
+      });
+      return lastNameErrorsArray;
+    }),
   // Plug Mongoose into Joigoose
 
   Joigoose = require("joigoose")(mongoose),
@@ -76,7 +103,9 @@ const mongoose = require("mongoose"),
   joiUserSchema = Joi.object()
     .keys({
       email,
-      password
+      password,
+      firstName,
+      lastName
     })
     .required(),
   validationSchemas = {
@@ -85,7 +114,16 @@ const mongoose = require("mongoose"),
       .keys({
         email,
         password,
-        confirmation
+        confirmation,
+        firstName,
+        lastName
+      })
+      .required(),
+    login: Joi.object()
+      .options({ abortEarly: false })
+      .keys({
+        email,
+        password
       })
       .required()
   },

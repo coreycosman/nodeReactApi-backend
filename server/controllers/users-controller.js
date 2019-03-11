@@ -1,12 +1,17 @@
-const _ = require("lodash");
-
-const { User } = require("../models/User");
-const { generateUniqueId } = require("../modules/helpers/unique-id");
-const serverError = require("../modules/helpers/server-error");
+const _ = require("lodash"),
+  { User } = require("../models/User"),
+  { generateUniqueId } = require("../modules/helpers/unique-id"),
+  serverError = require("../modules/helpers/server-error");
 
 module.exports = {
   signup: async (req, res, next) => {
-    const resBody = _.pick(req.body, ["email", "password", "confirmation"]);
+    const resBody = _.pick(req.body, [
+      "email",
+      "password",
+      "confirmation",
+      "firstName",
+      "lastName"
+    ]);
     // check password and confirmation match
     if (resBody.password != resBody.confirmation) {
       return res.status(400).json({
@@ -23,9 +28,14 @@ module.exports = {
       });
     }
     try {
-      const userBody = _.pick(resBody, ["email"], ["password"]);
-      const newUser = new User(userBody);
-      const token = newUser.generateAuthToken();
+      const userBody = _.pick(resBody, [
+          "email",
+          "password",
+          "firstName",
+          "lastName"
+        ]),
+        newUser = new User(userBody),
+        token = newUser.generateAuthToken();
       await newUser.save();
       res.status(200).json(token);
     } catch (e) {
@@ -35,9 +45,9 @@ module.exports = {
   },
 
   login: async (req, res, next) => {
-    const body = _.pick(req.body, ["email", "password"]);
-    // check email is registered
-    const user = await User.checkEmail(body.email);
+    const body = _.pick(req.body, ["email", "password"]),
+      // check email is registered
+      user = await User.checkEmail(body.email);
     if (!user) {
       return res.status(400).json({
         errors: [{ id: generateUniqueId(), errMessage: "email not found" }]

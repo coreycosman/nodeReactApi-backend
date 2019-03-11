@@ -6,6 +6,10 @@ const routes = [
   {
     name: "/posts",
     middleware: "./post-routes"
+  },
+  {
+    name: "/comments",
+    middleware: "./comment-routes"
   }
 ];
 

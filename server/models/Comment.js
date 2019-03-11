@@ -1,50 +1,43 @@
-// POST MODEL:
-
+// COMMENT MODEL:
 const mongoose = require("mongoose"),
   Joi = require("joi"),
   { generateUniqueId } = require("../modules/helpers/unique-id"),
   // Define schema objects and errors with Joi
-  title = Joi.string()
+  text = Joi.string()
     .required()
     .trim()
     .error(errors => {
-      const titleErrorsArray = errors.map(err => {
+      const textErrorsArray = errors.map(err => {
         switch (err.type) {
           case "any.empty":
-            return { message: "please include a post title" };
+            return { message: "please include comment text" };
           default:
             return;
         }
       });
-      return titleErrorsArray;
+      return textErrorsArray;
     }),
-  description = Joi.string()
-    .required()
-    .trim()
-    .error(errors => {
-      const descriptErrorsArray = errors.map(err => {
-        switch (err.type) {
-          case "any.empty":
-            return { message: "please include a post description" };
-          default:
-            return;
-        }
-      });
-      return descriptErrorsArray;
-    }),
-  userId = Joi.object(),
-  createdAt = Joi.date().default(Date.now()),
-  updatedAt = Joi.date().default(Date.now()),
+  formPostId = Joi.string(),
+  postId = Joi.object().required(),
+  userId = Joi.object().required(),
+  userName = Joi.string().required(),
+  createdAt = Joi.date()
+    .default(Date.now())
+    .required(),
+  updatedAt = Joi.date()
+    .default(Date.now())
+    .required(),
   // Plug Mongoose into Joigoose
 
   Joigoose = require("joigoose")(mongoose),
   // Define joi schema and specific validation schemas
 
-  joiPostSchema = Joi.object()
+  joiCommentSchema = Joi.object()
     .keys({
-      title,
-      description,
+      text,
+      postId,
       userId,
+      userName,
       createdAt,
       updatedAt
     })
@@ -53,26 +46,26 @@ const mongoose = require("mongoose"),
     create: Joi.object()
       .options({ abortEarly: false })
       .keys({
-        title,
-        description
+        text,
+        formPostId
       })
       .required()
   },
   // Convert Joi Schema into Mongoose Schema
 
-  PostSchema = new mongoose.Schema(Joigoose.convert(joiPostSchema));
+  CommentSchema = new mongoose.Schema(Joigoose.convert(joiCommentSchema));
 
-// Import post middleware
-// require("../modules/Post/before-actions")(PostSchema);
-// require("../modules/Post/instance-methods")(PostSchema);
-// require("../modules/Post/class-methods")(PostSchema);
+// Import Comment middleware
+// require("../modules/Comment/before-actions")(CommentSchema);
+// require("../modules/Comment/instance-methods")(CommentSchema);
+// require("../modules/Comment/class-methods")(CommentSchema);
 
 // Define Mongoose Schema
 
-const Post = mongoose.model("Post", PostSchema);
+const Comment = mongoose.model("Comment", CommentSchema);
 
 module.exports = {
-  Post,
+  Comment,
   validate: schemaType => (req, res, next) => {
     const result = Joi.validate(req.body, validationSchemas[schemaType]);
     let errorsArray = [];

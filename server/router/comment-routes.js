@@ -6,10 +6,15 @@ const passportService = require("../services/passport");
 
 // MIDDLEWARE:
 const requireAuth = passport.authenticate("jwt", { session: false });
-const { validate } = require("../models/User");
-const { signup, login } = require("../controllers/users-controller");
+const { validate } = require("../models/Comment");
+const {
+  createComment,
+  fetchAllComments
+} = require("../controllers/comments-controller");
 
-router.route("/").post(validate("auth"), signup);
-router.route("/login").post(validate("login"), login);
+router
+  .route("/")
+  .get(requireAuth, fetchAllComments)
+  .post(requireAuth, validate("create"), createComment);
 
 module.exports = router;

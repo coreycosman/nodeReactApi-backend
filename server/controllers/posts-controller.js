@@ -1,15 +1,14 @@
-const _ = require("lodash");
-
-const { User } = require("../models/User");
-const { Post } = require("../models/Post");
-const { generateUniqueId } = require("../modules/helpers/unique-id");
-const serverError = require("../modules/helpers/server-error");
+const _ = require("lodash"),
+  { User } = require("../models/User"),
+  { Post } = require("../models/Post"),
+  { ObjectId } = require("mongodb"),
+  serverError = require("../modules/helpers/server-error");
 
 module.exports = {
   fetchAllPosts: async (req, res, next) => {
     try {
-      const posts = await Post.find({});
-      res.status(200).json({ posts });
+      const allPosts = await Post.find({});
+      res.status(200).json({ allPosts });
     } catch (e) {
       console.log(e);
       serverError(res);
@@ -18,8 +17,18 @@ module.exports = {
   fetchUserPosts: async (req, res, next) => {
     try {
       const userPosts = await Post.find({ userId: req.user._id });
-      userName = req.user.email;
+      userName = `${req.user.firstName}`;
       res.status(200).json({ userPosts, userName });
+    } catch (e) {
+      console.log(e);
+      serverError(res);
+    }
+  },
+  fetchPost: async (req, res, next) => {
+    const postId = ObjectId(req.body.postId);
+    try {
+      const post = await Post.findById(postId);
+      res.status(200).json({ post });
     } catch (e) {
       console.log(e);
       serverError(res);
