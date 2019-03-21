@@ -23,12 +23,6 @@ const { mongoose } = require("./db/mongoose");
 console.log(process.env.MONGODB_URI);
 
 // ___________________________
-``;
-// CONTROLLER CONFIG:
-// const todosController = require('./controllers/todos-controller');
-// const usersController = require('./controllers/users-controller');
-
-// ___________________________
 
 // MIDDLEWARE:
 
