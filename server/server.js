@@ -10,7 +10,7 @@ const cors = require("cors");
 
 // Local:
 
-require("./config/config");
+require('dotenv').config()
 
 // ___________________________
 
